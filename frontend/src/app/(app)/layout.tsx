@@ -10,13 +10,13 @@ import {
 import { MdOutlineLocationCity } from "react-icons/md";
 import { RiCalendarTodoFill } from "react-icons/ri";
 import { PiScrollFill } from "react-icons/pi";
-import logo from "../../public/images/logo.png"
+import logo from "../../../public/images/logo.png"
 import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 
 const LinkItems = [
-    { name: 'Dashboard', icon: FiHome, href: '/dashboard' },
+    { name: 'Dashboard', icon: FiHome, href: '/' },
     { name: 'Ambientes', icon: MdOutlineLocationCity, href: '/ambientes' },
     { name: 'Reservas', icon: RiCalendarTodoFill, href: '/reservas' },
     { name: 'Históricos', icon: PiScrollFill, href: '/historicos' },
