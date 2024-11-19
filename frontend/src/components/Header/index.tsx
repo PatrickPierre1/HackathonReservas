@@ -32,7 +32,7 @@ export const Header = () => {
                                 <IoIosArrowDown />
                             </div>
                         </Collapsible.Trigger>
-                        <Collapsible.Content right="5" position="absolute" flex="auto">
+                        <Collapsible.Content right="5" position="absolute" flex="auto" zIndex={999}>
                             <Box padding="3" borderWidth="1px" bgColor="white" color="black" borderRadius="md">
                                 <Text cursor="pointer" color="red.400">Desconectar</Text>
                             </Box>
