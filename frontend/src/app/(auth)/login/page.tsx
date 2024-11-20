@@ -1,7 +1,123 @@
+'use client';
+
+import { SyntheticEvent, useCallback, useRef, useState } from 'react';
+import { Loading } from '../../../components/Loading';
+import { Toast } from '../../../components/Toast';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
+
 export default function Login() {
-    return (
-        <div>
-            <h1>Página de Login</h1>
+  const router = useRouter();
+  const refForm = useRef<any>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isToast, setIsToast] = useState(false);
+
+  const submitForm = useCallback(
+    (event: React.SyntheticEvent) => {
+      event.preventDefault();
+
+      // Resetando mensagens de erro
+      const emailError = document.getElementById('emailError');
+      const senhaError = document.getElementById('senhaError');
+      
+      // Validando o formulário
+      if (refForm.current.checkValidity()) {
+        const target = event.target as typeof event.target & {
+          email: { value: string };
+          senha: { value: string };
+        };
+
+        setIsLoading(true);
+        axios
+          .post('', {
+            email: target.email.value,
+            password: target.senha.value,
+          })
+          .then((resposta) => {
+            localStorage.setItem('americanos.token', JSON.stringify(resposta.data));
+            router.push('/');
+          })
+          .catch((erro) => {
+            console.log(erro);
+            setIsLoading(false);
+            setIsToast(true);
+          });
+      } else {
+        refForm.current.classList.add('was-validated');
+        
+        // Exibe mensagens de erro
+        if (!refForm.current.email.checkValidity()) {
+          emailError?.classList.remove('hidden');
+        }
+        if (!refForm.current.senha.checkValidity()) {
+          senhaError?.classList.remove('hidden');
+        }
+      }
+    },
+    [router]
+  );
+
+  return (
+    <>
+      <Loading visible={isLoading} />
+      <Toast message="Credenciais Inválidas" onClose={() => setIsToast(false)} show={isToast} color="danger" />
+
+      <div className="flex flex-col justify-center items-center w-screen h-screen bg-gray-50">
+        <div className="border-2 border-gray-300 p-5 w-full max-w-md rounded-lg shadow-md bg-white">
+          <div className="flex flex-col items-center">
+            <h1 className="text-[#3c89f5] text-3xl font-bold">Admin</h1>
+            <p className="text-gray-500 text-lg">Preencha os campos para logar</p>
+          </div>
+          <hr className="my-4" />
+
+          <form
+            className="needs-validation"
+            noValidate
+            onSubmit={submitForm}
+            ref={refForm}
+          >
+            <div className="mb-4">
+              <label htmlFor="email" className="block text-gray-700 font-medium mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                placeholder="Digite seu email"
+                id="email"
+                required
+                className="w-full p-3 text-lg rounded border border-gray-300 focus:outline-none focus:border-[#3c89f5]"
+              />
+              <div id="emailError" className="text-red-500 text-sm mt-1 hidden">
+                Por favor, insira seu email
+              </div>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="senha" className="block text-gray-700 font-medium mb-1">
+                Senha
+              </label>
+              <input
+                type="password"
+                placeholder="Digite sua senha"
+                id="senha"
+                required
+                className="w-full p-3 text-lg rounded border border-gray-300 focus:outline-none focus:border-[#3c89f5]"
+              />
+              <div id="senhaError" className="text-red-500 text-sm mt-1 hidden">
+                Por favor, insira sua senha
+              </div>
+            </div>
+            <div>
+              <button
+                type="submit"
+                id="botao"
+                className="w-full p-3 bg-[#3c89f5] text-white text-lg rounded cursor-pointer hover:bg-[#357acc] transition duration-300 ease-in-out"
+              >
+                Enviar
+              </button>
+            </div>
+          </form>
         </div>
-    );
+      </div>
+    </>
+  );
 }
