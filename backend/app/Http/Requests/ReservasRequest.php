@@ -27,7 +27,7 @@ class ReservasRequest extends FormRequest
             'usuario_id' => 'required|integer',
             'ambiente_id' => 'required|integer',
             'data_hora_inicio' => 'required|date',
-            'data_hora_fim' => 'required|date',
+            'data_hora_fim' => 'required|date|after:data_hora_inicio',
             'status' => ['required', Rule::enum(ReservasStatus::class)]
         ];
 
@@ -36,7 +36,7 @@ class ReservasRequest extends FormRequest
                 'usuario_id' => 'nullable|integer',
                 'ambiente_id' => 'nullable|integer',
                 'data_hora_inicio' => 'nullable|date',
-                'data_hora_fim' => 'nullable|date',
+                'data_hora_fim' => 'nullable|date|after:data_hora_inicio',
                 'status' => ['nullable', Rule::enum(ReservasStatus::class)]
             ];
         }
@@ -52,7 +52,8 @@ class ReservasRequest extends FormRequest
         return [
             'required' => 'Esse campo é obrigatório',
             'integer' => 'Esse campo deve ser um número inteiro',
-            'data' => 'Esse campo deve ser uma data válida'
+            'date' => 'Esse campo deve ser uma data válida',
+            'after' => 'Horário final não pode ser menor do que o inicial'
         ];
     }
 }

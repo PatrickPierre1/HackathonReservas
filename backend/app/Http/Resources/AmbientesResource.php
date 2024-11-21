@@ -20,6 +20,10 @@ class AmbientesResource extends JsonResource
             'tipo' => $this->tipo,
             'status' => $this->status,
             'descricao' => $this->descricao,
+            'capacidade' => $this->capacidade,
+            'maquinas_disponiveis' => $this->maquinas_disponiveis,
+            'hora_inicio' => $this->hora_inicio,
+            'hora_fim' => $this->hora_fim,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];
