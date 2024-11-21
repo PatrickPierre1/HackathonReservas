@@ -16,7 +16,11 @@ class Ambiente extends Model
         'nome',
         'tipo',
         'status',
-        'descricao'
+        'descricao',
+        'capacidade',
+        'maquinas_disponiveis',
+        'hora_inicio',
+        'hora_fim'
     ];
 
     public function reservas(): HasMany
