@@ -19,8 +19,7 @@ const LinkItems = [
     { name: 'Dashboard', icon: FiHome, href: '/' },
     { name: 'Ambientes', icon: MdOutlineLocationCity, href: '/ambientes' },
     { name: 'Reservas', icon: RiCalendarTodoFill, href: '/reservas' },
-    { name: 'Históricos', icon: PiScrollFill, href: '/historicos' },
-    { name: 'Configurações', icon: FiSettings, href: '/configuracoes' },
+    { name: 'Históricos', icon: PiScrollFill, href: '/historicos' }
 ];
 
 const poppins = Poppins({
@@ -36,7 +35,6 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
     return (
-
         <html lang="en" className={poppins.className} >
             <body suppressHydrationWarning={false}>
                 <>

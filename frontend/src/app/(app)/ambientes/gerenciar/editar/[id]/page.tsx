@@ -1,8 +1,22 @@
 "use client";
 import { Button, Fieldset, Input, Stack, Textarea } from "@chakra-ui/react"
 import { Field } from "@/components/ui/field"
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Editar({ params }: { params: { id: string } }) {
+    const router = useRouter();
+
+    useEffect(() => {
+        const token = localStorage.getItem('unialfa.token');
+        const permissoes = localStorage.getItem('unialfa.permissoes');
+
+
+        if (!token || permissoes === "Professor") {
+            router.replace('/ambientes');
+        }
+    }, [router]);
+
     return (
         <>
             <div className="flex justify-center items-center mt-32">

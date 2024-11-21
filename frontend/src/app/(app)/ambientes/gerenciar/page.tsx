@@ -35,6 +35,16 @@ interface Ambiente {
 export default function Gerenciar() {
     const router = useRouter();
 
+    useEffect(() => {
+        const token = localStorage.getItem('unialfa.token');
+        const permissoes = localStorage.getItem('unialfa.permissoes');
+
+
+        if (!token || permissoes === "Professor") {
+            router.replace('/ambientes');
+        }
+    }, [router]);
+
     const handleEdit = (id: number) => {
         router.push(`/ambientes/gerenciar/editar/${id}`);
     };

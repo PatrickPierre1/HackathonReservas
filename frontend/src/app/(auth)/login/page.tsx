@@ -19,7 +19,7 @@ export default function Login() {
       // Resetando mensagens de erro
       const emailError = document.getElementById('emailError');
       const senhaError = document.getElementById('senhaError');
-      
+
       // Validando o formulário
       if (refForm.current.checkValidity()) {
         const target = event.target as typeof event.target & {
@@ -29,22 +29,29 @@ export default function Login() {
 
         setIsLoading(true);
         axios
-          .post('', {
+          .post(process.env.NEXT_PUBLIC_API_URL + '/login', {
             email: target.email.value,
-            password: target.senha.value,
+            senha: target.senha.value,
           })
           .then((resposta) => {
-            localStorage.setItem('americanos.token', JSON.stringify(resposta.data));
+            const token = resposta.data.token;
+            const nome = resposta.data.nome;
+            const permissoes = resposta.data.permissoes;
+            localStorage.setItem('unialfa.token', token);
+            localStorage.setItem('unialfa.nome', nome);
+            localStorage.setItem('unialfa.permissoes', permissoes);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             router.push('/');
           })
           .catch((erro) => {
-            console.log(erro);
+            console.error('Erro ao fazer login:', erro);
+            alert('Erro ao fazer login. Verifique suas credenciais.');
             setIsLoading(false);
             setIsToast(true);
           });
       } else {
         refForm.current.classList.add('was-validated');
-        
+
         // Exibe mensagens de erro
         if (!refForm.current.email.checkValidity()) {
           emailError?.classList.remove('hidden');

@@ -1,5 +1,6 @@
 "use client";
 import { Box, Text, Grid, Badge, Button, Spinner } from "@chakra-ui/react";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -14,11 +15,11 @@ interface Ambiente {
 export default function Ambientes() {
     const getStatusColor = (status: string) => {
         switch (status) {
-            case "disponível":
+            case "1":
                 return "green";
-            case "reservado":
+            case "2":
                 return "orange";
-            case "manutenção":
+            case "3":
                 return "red";
             default:
                 return "gray";
@@ -27,33 +28,54 @@ export default function Ambientes() {
     const [ambientes, setAmbientes] = useState<Ambiente[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
+    const router = useRouter();
+    const nome = localStorage.getItem('unialfa.nome');
+    const permissoes = localStorage.getItem('unialfa.permissoes');
+    const isAdmin = localStorage.getItem('unialfa.permissoes') === "Admin";
+
+    useEffect(() => {
+        const token = localStorage.getItem('unialfa.token');
+        if (!token) {
+            router.replace('/login');
+        }
+    }, [router]);
+
     useEffect(() => {
         async function fetchAmbientes() {
             try {
-                const response = await fetch("/api/ambientes");
-                if (!response.ok) {
-                    throw new Error("Erro ao buscar ambientes");
+                const token = localStorage.getItem('unialfa.token');
+                const response = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/ambientes", {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.status === 200) {
+                    setAmbientes(Array.isArray(response.data.data) ? response.data.data : []);
+                } else {
+                    throw new Error('Erro ao buscar ambientes');
                 }
-                const data = await response.json();
-                setAmbientes(data);
             } catch (error) {
-                console.error(error);
+                console.error('Erro:', error);
             } finally {
                 setIsLoading(false);
             }
         }
+
         fetchAmbientes();
     }, []);
-
-    const router = useRouter();
     return (
         <Box bg="gray.100" py={8} px={4} minH="100vh">
             <Text fontSize="3xl" fontWeight="bold" textAlign="center" mb={6}>
                 Ambientes Disponíveis
             </Text>
-            <Box className="flex justify-end">
-                <Button onClick={() => router.push(`/ambientes/gerenciar/`)} fontWeight={"medium"} color="white" p="20px" mb="10px" bgColor="#14a548">Gerenciar</Button>
-            </Box>
+
+            {isAdmin && (
+                <Box className="flex justify-end">
+                    <Button onClick={() => router.push(`/ambientes/gerenciar/`)} fontWeight={"medium"} color="white" p="20px" mb="10px" bgColor="#14a548">Gerenciar</Button>
+                </Box>
+            )}
+
             {isLoading ? (
                 <Text textAlign="center" mt={6}>
                     Carregando...

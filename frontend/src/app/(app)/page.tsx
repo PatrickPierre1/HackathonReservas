@@ -1,11 +1,18 @@
-import { redirect } from 'next/navigation'
+"use client";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Dashboard() {
-	// const loginRealizado = true;
+	const router = useRouter();
+	const nome = localStorage.getItem('unialfa.nome');
+	const permissoes = localStorage.getItem('unialfa.permissoes');
 
-	// if (loginRealizado == false) {
-	// 	redirect('/login');
-	// }
+	useEffect(() => {
+		const token = localStorage.getItem('unialfa.token');
+		if (!token) {
+			router.replace('/login');
+		}
+	}, [router]);
 	return (
 		<>
 			<div>
