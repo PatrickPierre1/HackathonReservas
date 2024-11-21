@@ -15,7 +15,11 @@ class LoginController extends Controller
         if ($usuario && Hash::check($request->senha, $usuario->senha)) {
             $token = $usuario->createToken('auth_token')->plainTextToken;
 
-            return response()->json(['token' => $token]);
+            return response()->json([
+                'token' => $token,
+                'nome' => $usuario->nome,
+                'permissoes' => $usuario->permissoes
+            ]);
         }
 
         return response()->json(['message' => 'Credenciais inválidas'], 401);
