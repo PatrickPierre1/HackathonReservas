@@ -6,6 +6,7 @@ use App\Http\Controllers\ReservasController;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Middleware\JsonRequestMiddleware;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NotificacaoController;
 
 Route::post('login', [LoginController::class, 'login'])->name('login');
 
@@ -13,4 +14,6 @@ Route::middleware(['auth:sanctum', JsonRequestMiddleware::class])->group(functio
     Route::apiResource('usuarios', UsuariosController::class);
     Route::apiResource('ambientes', AmbientesController::class);
     Route::apiResource('reservas', ReservasController::class);
+    Route::apiResource('notificacoes', NotificacaoController::class);
+
 });

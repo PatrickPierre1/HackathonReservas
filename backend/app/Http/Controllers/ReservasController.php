@@ -15,9 +15,26 @@ class ReservasController extends Controller
 
     public function store(ReservasRequest $request)
     {
+        $ambiente = Ambiente::find($request->ambiente_id);
+
+        if (date("H:i:s", strtotime($request->data_hora_inicio)) < $ambiente->hora_inicio || 
+            date("H:i:s", strtotime($request->data_hora_fim)) > $ambiente->hora_fim
+        ) {
+            return response()->json(['mensagem' => 'O horário da reserva está fora do expediente do ambiente'], 422);
+        }
+
+        $conflito = Reserva::where('ambiente_id', $request->ambiente_id)
+            ->where('status', 1)
+            ->where(function ($query) use ($request) {
+                $query->where('data_hora_inicio', '<', $request->data_hora_inicio)
+                ->where('data_hora_inicio' , '<', $request->data_hora_fim);
+            })
+            ->get()->toArray();
+
+        dd($conflito);
+
         $reserva = Reserva::create($request->validated());
 
-        return new ReservasResource($reserva);
     }
 
     public function show(Reserva $reserva)
