@@ -5,11 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AmbientesRequest;
 use App\Http\Resources\AmbientesResource;
 use App\Models\Ambiente;
+use Illuminate\Http\Request;
 
 class AmbientesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->status) {
+            return AmbientesResource::collection(Ambiente::where('status', $request->status)->get());
+        }
+
         return AmbientesResource::collection(Ambiente::all());
     }
 
