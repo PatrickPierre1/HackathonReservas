@@ -45,7 +45,7 @@ export default function Configuracoes() {
     }, [router]);
 
     const handleEdit = (id: number) => {
-        router.push(`/configuracoes/${id}`);
+        router.push(`/configuracoes/editar/${id}`);
     };
 
     const handleDelete = (id: number) => {
@@ -92,6 +92,7 @@ export default function Configuracoes() {
                             <Table.ColumnHeader>Nome</Table.ColumnHeader>
                             <Table.ColumnHeader>E-mail</Table.ColumnHeader>
                             <Table.ColumnHeader>Permissão</Table.ColumnHeader>
+                            <Table.ColumnHeader>Opções</Table.ColumnHeader>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>

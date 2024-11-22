@@ -1,5 +1,5 @@
 "use client";
-import { Box, Text, Grid, Badge, Button, Spinner } from "@chakra-ui/react";
+import { Box, Text, Grid, Badge, Button, Spinner, Flex } from "@chakra-ui/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -9,6 +9,10 @@ interface Ambiente {
     nome: string;
     tipo: string;
     status: string;
+    capacidade: number;
+    maquinas_disponiveis: number;
+    hora_inicio: string;
+    hora_fim: string;
     descricao: string;
 }
 
@@ -106,6 +110,22 @@ export default function Ambientes() {
                                 <Text fontSize="sm" color="gray.600" mb={2}>
                                     Tipo: {ambiente.tipo}
                                 </Text>
+                                <Flex gap={5}>
+                                    <Text fontSize="sm" color="gray.600" mb={2}>
+                                        Capacidade: {ambiente.capacidade}
+                                    </Text>
+                                    <Text fontSize="sm" color="gray.600" mb={2}>
+                                        Maquinas Disponíveis: {ambiente.maquinas_disponiveis}
+                                    </Text>
+                                </Flex>
+                                <Flex gap={5}>
+                                    <Text fontSize="sm" color="gray.600" mb={2}>
+                                        Hora Inicio: {ambiente.hora_inicio}
+                                    </Text>
+                                    <Text fontSize="sm" color="gray.600" mb={2}>
+                                        Hora Fim: {ambiente.hora_fim}
+                                    </Text>
+                                </Flex>
                                 <Badge
                                     color={"white"}
                                     bgColor={getStatusColor(ambiente.status)}
@@ -114,7 +134,12 @@ export default function Ambientes() {
                                     py={1}
                                     borderRadius="md"
                                 >
-                                    {ambiente.status.charAt(0).toUpperCase() + ambiente.status.slice(1)}
+                                    {
+                                        Number(ambiente.status) === 1 ? "Disponível" :
+                                            Number(ambiente.status) === 2 ? "Reservado" :
+                                                Number(ambiente.status) === 3 ? "Manutenção" :
+                                                    "Status desconhecido"
+                                    }
                                 </Badge>
                                 <Text fontSize="sm" color="gray.600">
                                     {ambiente.descricao}
