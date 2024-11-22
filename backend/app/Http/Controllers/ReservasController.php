@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ReservasRequest;
 use App\Http\Resources\ReservasResource;
+use App\Models\Ambiente;
 use App\Models\Reserva;
 
 class ReservasController extends Controller
@@ -24,17 +25,30 @@ class ReservasController extends Controller
         }
 
         $conflito = Reserva::where('ambiente_id', $request->ambiente_id)
-            ->where('status', 1)
-            ->where(function ($query) use ($request) {
+        ->where('status', 1)
+        ->where(function ($query) use ($request) {
+            $query->where(function ($query) use ($request) {
                 $query->where('data_hora_inicio', '<', $request->data_hora_inicio)
-                ->where('data_hora_inicio' , '<', $request->data_hora_fim);
+                      ->where('data_hora_fim', '>', $request->data_hora_fim);
             })
-            ->get()->toArray();
+            ->orWhere(function ($query) use ($request) {
+                $query->where('data_hora_inicio', '>=', $request->data_hora_inicio)
+                      ->where('data_hora_inicio', '<', $request->data_hora_fim);
+            })
+            ->orWhere(function ($query) use ($request) {
+                $query->where('data_hora_fim', '>', $request->data_hora_inicio)
+                      ->where('data_hora_fim', '<=', $request->data_hora_fim);
+            });
+        })
+        ->exists();
 
-        dd($conflito);
+        if ($conflito) {
+            return response()->json(['mensagem' => 'Já existe uma reserva com o horário desejado'], 422);
+        }
 
         $reserva = Reserva::create($request->validated());
 
+        return new ReservasResource($reserva);
     }
 
     public function show(Reserva $reserva)

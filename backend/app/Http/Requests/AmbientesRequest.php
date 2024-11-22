@@ -28,6 +28,10 @@ class AmbientesRequest extends FormRequest
             'tipo' => 'required|string|min:3|max:255',
             'status' => ['required', Rule::enum(AmbientesStatus::class)],
             'descricao' => 'required|string|min:3',
+            'capacidade' => 'required|integer',
+            'maquinas_disponiveis' => 'nullable|integer',
+            'hora_inicio' => 'required|date_format:H:i:s',
+            'hora_fim' => 'required|date_format:H:i:s|after:hora_inicio'
         ];
 
         if ($this->method() === 'PATCH' || $this->method() === 'PUT') {
@@ -36,6 +40,10 @@ class AmbientesRequest extends FormRequest
                 'tipo' => 'nullable|string|min:3|max:255',
                 'status' => ['nullable', Rule::enum(AmbientesStatus::class)],
                 'descricao' => 'nullable|string|min:3',
+                'capacidade' => 'nullable|integer',
+                'maquinas_disponiveis' => 'nullable|integer',
+                'hora_inicio' => 'nullable|date_format:H:i:s',
+                'hora_fim' => 'nullable|date_format:H:i:s|after:hora_inicio'
             ];
         }
 
@@ -50,7 +58,10 @@ class AmbientesRequest extends FormRequest
         return [
             'required' => 'Esse campo é obrigatório',
             'min' => 'Esse campo deve conter no mínimo :min caracteres',
-            'max' => 'Esse campo deve conter no máximo :max caracteres'
+            'max' => 'Esse campo deve conter no máximo :max caracteres',
+            'integer' => 'Esse campo deve ser um número inteiro',
+            'date_format' => 'Formato de horário inválido',
+            'after' => 'Horário final não pode ser menor do que o inicial'
         ];
     }
 }
