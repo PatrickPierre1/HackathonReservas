@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
     DialogActionTrigger,
-    DialogBody,
+    DialogBody, 
     DialogCloseTrigger,
     DialogContent,
     DialogFooter,
@@ -23,6 +23,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import axios from "axios";
 
 interface Usuario {
     id: number;
@@ -57,18 +58,25 @@ export default function Configuracoes() {
     useEffect(() => {
         async function fetchUsuarios() {
             try {
-                const response = await fetch("/api/usuarios");
-                if (!response.ok) {
-                    throw new Error("Erro ao buscar usuarios");
+                const token = localStorage.getItem('unialfa.token');
+                const response = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/usuarios", {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.status === 200) {
+                    setUsuarios(Array.isArray(response.data.data) ? response.data.data : []);
+                } else {
+                    throw new Error('Erro ao buscar Usuarios');
                 }
-                const data = await response.json();
-                setUsuarios(data);  // Corrigido: usa setUsuarios para atualizar o estado
             } catch (error) {
-                console.error(error);
+                console.error('Erro:', error);
             } finally {
                 setIsLoading(false);
             }
         }
+
         fetchUsuarios();
     }, []);
 
