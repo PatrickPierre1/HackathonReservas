@@ -17,7 +17,7 @@ import { Header } from "@/components/Header";
 
 const LinkItems = [
     { name: 'Dashboard', icon: FiHome, href: '/' },
-    { name: 'Ambientes', icon: MdOutlineLocationCity, href: '/ambientes' },
+    { name: 'Ambientes', icon: MdOutlineLocationCity, href: '/ambientes/gerenciar' },
     { name: 'Reservas', icon: RiCalendarTodoFill, href: '/reservas' },
     { name: 'Históricos', icon: PiScrollFill, href: '/historicos' }
 ];
