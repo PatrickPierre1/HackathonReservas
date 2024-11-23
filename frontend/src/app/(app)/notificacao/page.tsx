@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import { Button, Box, Text } from '@chakra-ui/react';
 import { FaCalendarXmark } from "react-icons/fa6";
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Notification {
     id: number;
@@ -71,11 +73,13 @@ export default function Notifications() {
                 setNotifications((prevNotifications) =>
                     prevNotifications.filter((notification) => notification.id !== selectedNotification.id)
                 );
+                toast.success("Reserva cancelada com sucesso!")
             } else {
                 throw new Error('Erro ao cancelar o agendamento');
             }
         } catch (error) {
-            console.error("Erro ao cancelar a notificação:", error);
+            toast.error("Erro ao cancelar a reserva.")
+            console.error("Erro ao cancelar a reserva:", error);
         }
     };
 

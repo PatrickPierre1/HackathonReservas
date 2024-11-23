@@ -96,7 +96,7 @@ export default function Agendar({ params }: { params: { id: string } }) {
             });
 
             toast.success("Reserva criada com sucesso!");
-            router.push("/reservas");
+            router.push("/notificacao");
         } catch (error: any) {
             if (error.response && error.response.data) {
                 const apiErrorMessage = error.response.data.mensagem || "Erro ao criar a reserva.";
