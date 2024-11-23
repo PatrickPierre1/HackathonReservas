@@ -27,7 +27,7 @@ export default function Atualizar({ params }: { params: { id: string } }) {
         const permissoes = localStorage.getItem("unialfa.permissoes");
 
         if (!token || permissoes === "Professor") {
-            router.replace("/ambientes");
+            router.replace("/login");
         } else {
             fetchAmbiente(params.id);
         }
@@ -80,7 +80,7 @@ export default function Atualizar({ params }: { params: { id: string } }) {
 
             toaster.create({ description: "Ambiente atualizado com sucesso", type: "success" });
             console.log("Ambiente atualizado com sucesso:", response.data);
-            router.push("/ambientes");
+            router.push("/ambientes/gerenciar");
         } catch (error) {
             toaster.create({ description: "Erro ao atualizar ambiente", type: "error" });
             console.error("Erro ao atualizar ambiente:", error);

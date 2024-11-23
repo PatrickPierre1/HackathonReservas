@@ -29,7 +29,7 @@ export default function Criar() {
         const permissoes = localStorage.getItem("unialfa.permissoes");
 
         if (!token || permissoes === "Professor") {
-            router.replace("/ambientes");
+            router.replace("/login");
         }
     }, [router]);
 
@@ -83,7 +83,7 @@ export default function Criar() {
             setToastType("success");
             setShowToast(true);
             console.log("Ambiente criado com sucesso:", response.data);
-            router.push("/ambientes");
+            router.push("/ambientes/gerenciar");
         } catch (error) {
             setToastMessage("Erro ao criar o ambiente");
             setToastType("error");
