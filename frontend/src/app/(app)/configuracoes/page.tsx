@@ -40,7 +40,7 @@ export default function Configuracoes() {
         const permissoes = localStorage.getItem('unialfa.permissoes');
 
         if (!token || permissoes === "Professor") {
-            router.replace('/configuracoes');
+            router.replace('/reservas');
         }
     }, [router]);
 
