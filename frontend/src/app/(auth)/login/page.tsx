@@ -37,11 +37,11 @@ export default function Login() {
             const token = resposta.data.token;
             const nome = resposta.data.nome;
             const permissoes = resposta.data.permissoes;
-            const usuario_id = resposta.data.id
+            const usuario_id = resposta.data.usuario_id;
             localStorage.setItem('unialfa.token', token);
             localStorage.setItem('unialfa.nome', nome);
             localStorage.setItem('unialfa.permissoes', permissoes);
-            localStorage.setItem('unialfa.usuario_id', "2");
+            localStorage.setItem('unialfa.usuario_id', usuario_id);
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             router.push('/');
           })

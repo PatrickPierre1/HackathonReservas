@@ -1,5 +1,4 @@
 "use client";
-
 import { Button, Fieldset, Flex, Input, Stack, Text } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
 import { useEffect, useState } from "react";
@@ -78,6 +77,19 @@ export default function Agendar({ params }: { params: { id: string } }) {
             };
 
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/reservas`, requestData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            // Enviar notificação de sucesso
+            const notificationData = {
+                usuario_id: usuarioId,
+                mensagem: "Reserva agendada com sucesso!",
+                tipo: "Reservada",
+            };
+
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/notificacoes`, notificationData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
