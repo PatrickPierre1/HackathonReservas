@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 export const Header = () => {
     const [nome, setNome] = useState<string | null>(null);
     const [permissoes, setPermissoes] = useState<string | null>(null);
+    const [isOpen, setIsOpen] = useState(false);
 
     const pathname = usePathname();
     const formattedTitle = pathname
@@ -30,6 +31,10 @@ export const Header = () => {
         }
     }, []); // Executa apenas uma vez, após a renderização inicial
 
+    useEffect(() => {
+        setIsOpen(false);
+    }, [pathname]);
+
     return (
         <>
             <header className="flex items-center justify-between h-16 px-4 bg-white border-b lg:ml-64">
@@ -38,8 +43,8 @@ export const Header = () => {
                     <Link href={"/notificacao"} className="p-3 bg-gray-100 rounded-full">
                         <FaBell size={20} className="hover:text-blue-500" />
                     </Link>
-                    <Collapsible.Root>
-                        <Collapsible.Trigger>
+                    <Collapsible.Root open={isOpen} onOpenChange={setIsOpen}>
+                        <Collapsible.Trigger >
                             <div className="flex items-center gap-3">
                                 <Avatar
                                     name="aa"
@@ -59,6 +64,7 @@ export const Header = () => {
                                     <Link
                                         className="text-blue-500 flex flex-row items-center gap-3 pb-4"
                                         href={"/configuracoes"}
+                                         onClick={() => setIsOpen(false)}
                                     >
                                         <FiSettings /> Configurações
                                     </Link>
@@ -70,6 +76,7 @@ export const Header = () => {
                                         localStorage.removeItem("unialfa.token");
                                         localStorage.removeItem("unialfa.nome");
                                         localStorage.removeItem("unialfa.permissoes");
+                                        setIsOpen(false);
                                     }}
                                 >
                                     <FaSignOutAlt /> Desconectar

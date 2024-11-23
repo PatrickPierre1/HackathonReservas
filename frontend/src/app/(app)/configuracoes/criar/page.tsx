@@ -194,6 +194,7 @@ export default function Criar() {
                                 color="white"
                                 width="150px"
                                 type="submit"
+                                onClick={handleOk}
                             >
                                 Criar
                             </Button>

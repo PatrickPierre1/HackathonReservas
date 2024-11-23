@@ -4,14 +4,15 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function Dashboard() {
+  const router = useRouter();
+  const [currentIndex, setCurrentIndex] = useState(0);
   const images = [
     "https://www.alfaumuarama.edu.br/downloads/banner/1726576606_1.jpg",
     "https://www.alfaumuarama.edu.br/downloads/banner/1728647348_1.jpg",
     "https://www.alfaumuarama.edu.br/downloads/banner/1713567262_1.jpg",
   ];
-
-  const [currentIndex, setCurrentIndex] = useState(0);
-
+  const [ambientes, setAmbientes] = useState<string[]>([]);
+  const [reservasFiltradas, setReservasFiltradas] = useState<any[]>([]);
   useEffect(() => {
     // Configura o intervalo para trocar de imagem automaticamente
     const interval = setInterval(() => {
@@ -21,7 +22,6 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  const router = useRouter();
   const [isClient, setIsClient] = useState(false);
 
   const [nome, setNome] = useState<string | null>(null);
