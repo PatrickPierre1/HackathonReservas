@@ -4,6 +4,8 @@ import { SyntheticEvent, useCallback, useRef, useState } from 'react';
 import { Loading } from '../../../components/Loading';
 import { Toast } from '../../../components/Toast';
 import axios from 'axios';
+import logo from "../../../../public/images/login.png"
+import Image from "next/image";
 import { useRouter } from 'next/navigation';
 
 export default function Login() {
@@ -72,9 +74,11 @@ export default function Login() {
       <Toast message="Credenciais Inválidas" onClose={() => setIsToast(false)} show={isToast} color="danger" />
 
       <div className="flex flex-col justify-center items-center w-screen h-screen bg-gray-50">
-        <div className="border-2 border-gray-300 p-5 w-full max-w-md rounded-lg shadow-md bg-white">
+        <div className="border-2 border-gray-300 p-6 w-full max-w-md rounded-lg shadow-md bg-white">
           <div className="flex flex-col items-center">
-            <h1 className="text-[#3c89f5] text-3xl font-bold">Admin</h1>
+            <div className="flex items-center justify-between h-16 m-4">
+                                    <Image src={logo} alt="" width={250} />
+                                </div>
             <p className="text-gray-500 text-lg">Preencha os campos para logar</p>
           </div>
           <hr className="my-4" />
@@ -121,7 +125,7 @@ export default function Login() {
                 id="botao"
                 className="w-full p-3 bg-[#3c89f5] text-white text-lg rounded cursor-pointer hover:bg-[#357acc] transition duration-300 ease-in-out"
               >
-                Enviar
+                Entrar
               </button>
             </div>
           </form>
