@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { Metadata } from "next";
 import styles from "./styles.module.css";
 import "./global.css";
 import { Provider } from "@/components/ui/provider";
@@ -11,6 +11,7 @@ import logo from "../../../public/images/logo.png";
 import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/Header";
+import { cookies } from "next/headers"; // Para acessar cookies no lado do servidor
 
 const LinkItems = [
   { name: "Home", icon: FiHome, href: "/" },
@@ -18,9 +19,16 @@ const LinkItems = [
     name: "Ambientes",
     icon: MdOutlineLocationCity,
     href: "/ambientes/gerenciar",
+    requiresPermission: "Admin", // Permissão necessária
   },
   { name: "Reservas", icon: RiCalendarTodoFill, href: "/reservas" },
   { name: "Históricos", icon: PiScrollFill, href: "/historicos" },
+  {
+    name: "Configurações",
+    icon: FiSettings,
+    href: "/configuracoes",
+    requiresPermission: "Admin", // Permissão necessária
+  },
 ];
 
 const poppins = Poppins({
@@ -33,9 +41,26 @@ export const metadata: Metadata = {
   description: "Hackathon",
 };
 
+// Função para obter permissões dos cookies
+function getPermissions() {
+  const cookieStore = cookies();
+  const permissoes = cookieStore.get("unialfa.permissoes")?.value;
+
+  // Tentar converter em JSON e retornar como array
+  try {
+    return permissoes ? JSON.parse(permissoes) : [];
+  } catch {
+    console.error("Erro ao analisar as permissões do cookie.");
+    return [];
+  }
+}
+
+// O componente principal da página
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const permissions = getPermissions(); // Obter permissões no lado do servidor
+
   return (
     <html lang="en" className={poppins.className}>
       <body suppressHydrationWarning={false}>
@@ -56,16 +81,26 @@ export default function RootLayout({
                   </Link>
                 </div>
                 <nav className="mt-4">
-                  {LinkItems.map((link) => (
-                    <Link
-                      key={link.name}
-                      href={link.href}
-                      className="flex items-center px-4 py-2 text-white hover:text-gray-200"
-                    >
-                      <link.icon className="mr-3" />
-                      {link.name}
-                    </Link>
-                  ))}
+                  {LinkItems.map((link) => {
+                    // Verificar se o link requer permissões específicas
+                    if (
+                      link.requiresPermission &&
+                      !permissions.includes(link.requiresPermission)
+                    ) {
+                      return null; // Ocultar link se não tiver permissão
+                    }
+
+                    return (
+                      <Link
+                        key={link.name}
+                        href={link.href}
+                        className="flex items-center px-4 py-2 text-white hover:text-gray-200"
+                      >
+                        <link.icon className="mr-3" />
+                        {link.name}
+                      </Link>
+                    );
+                  })}
                 </nav>
               </div>
               <Header />

@@ -23,6 +23,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import axios from "axios";
 
 interface Ambiente {
     id: number;
@@ -30,6 +31,10 @@ interface Ambiente {
     tipo: string;
     status: string;
     descricao: string;
+    capacidade: string;
+    maquinas_disponiveis: string;
+    hora_inicio: string;
+    hora_fim: string;
 }
 
 export default function Gerenciar() {
@@ -59,18 +64,25 @@ export default function Gerenciar() {
     useEffect(() => {
         async function fetchAmbientes() {
             try {
-                const response = await fetch("/api/ambientes");
-                if (!response.ok) {
-                    throw new Error("Erro ao buscar ambientes");
+                const token = localStorage.getItem('unialfa.token');
+                const response = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/ambientes", {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.status === 200) {
+                    setAmbientes(Array.isArray(response.data.data) ? response.data.data : []);
+                } else {
+                    throw new Error('Erro ao buscar ambientes');
                 }
-                const data = await response.json();
-                setAmbientes(data);
             } catch (error) {
-                console.error(error);
+                console.error('Erro:', error);
             } finally {
                 setIsLoading(false);
             }
         }
+
         fetchAmbientes();
     }, []);
     return (
@@ -79,78 +91,80 @@ export default function Gerenciar() {
                 <Box className="flex justify-start">
                     <Button onClick={() => router.push(`/ambientes/gerenciar/criar`)} bgColor={"green.500"} padding={"10px"} color={"white"} variant={"outline"}> <FiPlus />Adicionar</Button>
                 </Box>
-                <Table.Root size="lg" variant="line" striped interactive>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.ColumnHeader>Nome</Table.ColumnHeader>
-                            <Table.ColumnHeader>Tipo</Table.ColumnHeader>
-                            <Table.ColumnHeader>Status</Table.ColumnHeader>
-                            <Table.ColumnHeader>Descrição</Table.ColumnHeader>
-                            <Table.ColumnHeader>Opções</Table.ColumnHeader>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {ambientes.map((item) => (
-                            <Table.Row key={item.id}>
-                                <Table.Cell>{item.nome}</Table.Cell>
-                                <Table.Cell>{item.tipo}</Table.Cell>
-                                <Table.Cell>{item.status}</Table.Cell>
-                                <Table.Cell>{item.descricao}</Table.Cell>
-                                <Table.Cell>
-                                    <Button
-                                        size="sm"
-                                        onClick={() => handleEdit(item.id)}
-                                        className="mr-2"
-                                        padding={"8px"}
-                                        bgColor={"#3c89f5"}
-                                    >
-                                        <BsPencilSquare color="white" fontSize={"20px"} />
-                                    </Button>
+                <Table.ScrollArea borderWidth="1px" maxW="screen">
+                    <Table.Root size="lg" variant="line" striped interactive>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.ColumnHeader>Nome</Table.ColumnHeader>
+                                <Table.ColumnHeader>Tipo</Table.ColumnHeader>
+                                <Table.ColumnHeader>Status</Table.ColumnHeader>
+                                <Table.ColumnHeader>Descrição</Table.ColumnHeader>
+                                <Table.ColumnHeader>Capacidade</Table.ColumnHeader>
+                                <Table.ColumnHeader>Maquinas Disponiveis</Table.ColumnHeader>
+                                <Table.ColumnHeader>Hora de inicio</Table.ColumnHeader>
+                                <Table.ColumnHeader>Hora do fim</Table.ColumnHeader>
+                                <Table.ColumnHeader>Opções</Table.ColumnHeader>
 
-                                    <DialogRoot placement={"center"} role="alertdialog">
-                                        <DialogTrigger asChild>
-                                            <Button
-                                                size="sm"
-                                                padding={"8px"}
-                                                bgColor={"red.500"}
-                                            >
-                                                <MdDelete color="white" fontSize={"20px"} />
-                                            </Button>
-                                        </DialogTrigger>
-                                        <DialogContent>
-                                            <DialogHeader>
-                                                <DialogTitle>Tem certeza?</DialogTitle>
-                                            </DialogHeader>
-                                            <DialogBody>
-                                                <p>
-                                                    Essa ação não pode ser desfeita. Isso excluirá permanentemente e os dados de nossos sistemas.
-                                                </p>
-                                            </DialogBody>
-                                            <DialogFooter>
-                                                <DialogActionTrigger asChild>
-                                                    <Button variant="outline">Cancelar</Button>
-                                                </DialogActionTrigger>
-                                                <Button onClick={() => handleDelete(item.id)} bgColor="red.500" color={"white"} paddingX={"10px"}>Deletar</Button>
-                                            </DialogFooter>
-                                            <DialogCloseTrigger />
-                                        </DialogContent>
-                                    </DialogRoot>
-
-                                </Table.Cell>
                             </Table.Row>
-                        ))}
-                    </Table.Body>
-                </Table.Root>
+                        </Table.Header>
+                        <Table.Body>
+                            {ambientes.map((item) => (
+                                <Table.Row key={item.id}>
+                                    <Table.Cell>{item.nome}</Table.Cell>
+                                    <Table.Cell>{item.tipo}</Table.Cell>
+                                    <Table.Cell>{item.status}</Table.Cell>
+                                    <Table.Cell>{item.descricao}</Table.Cell>
+                                    <Table.Cell>{item.capacidade}</Table.Cell>
+                                    <Table.Cell>{item.maquinas_disponiveis}</Table.Cell>
+                                    <Table.Cell>{item.hora_inicio}</Table.Cell>
+                                    <Table.Cell>{item.hora_fim}</Table.Cell>
+                                    <Table.Cell>
+                                        <Button
+                                            size="sm"
+                                            onClick={() => handleEdit(item.id)}
+                                            className="mr-2"
+                                            padding={"8px"}
+                                            bgColor={"#3c89f5"}
+                                        >
+                                            <BsPencilSquare color="white" fontSize={"20px"} />
+                                        </Button>
 
-                <div className="flex justify-end">
-                    <PaginationRoot count={ambientes.length * 5} pageSize={5} page={1}>
-                        <HStack wrap="wrap">
-                            <PaginationPrevTrigger />
-                            <PaginationItems />
-                            <PaginationNextTrigger />
-                        </HStack>
-                    </PaginationRoot>
-                </div>
+                                        <DialogRoot placement={"center"} role="alertdialog">
+                                            <DialogTrigger asChild>
+                                                <Button
+                                                    size="sm"
+                                                    padding={"8px"}
+                                                    bgColor={"red.500"}
+                                                >
+                                                    <MdDelete color="white" fontSize={"20px"} />
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent>
+                                                <DialogHeader>
+                                                    <DialogTitle>Tem certeza?</DialogTitle>
+                                                </DialogHeader>
+                                                <DialogBody>
+                                                    <p>
+                                                        Essa ação não pode ser desfeita. Isso excluirá permanentemente e os dados de nossos sistemas.
+                                                    </p>
+                                                </DialogBody>
+                                                <DialogFooter>
+                                                    <DialogActionTrigger asChild>
+                                                        <Button variant="outline">Cancelar</Button>
+                                                    </DialogActionTrigger>
+                                                    <Button onClick={() => handleDelete(item.id)} bgColor="red.500" color={"white"} paddingX={"10px"}>Deletar</Button>
+                                                </DialogFooter>
+                                                <DialogCloseTrigger />
+                                            </DialogContent>
+                                        </DialogRoot>
+
+                                    </Table.Cell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table.Root>
+                </Table.ScrollArea>
+
             </Stack>
         </>
     )

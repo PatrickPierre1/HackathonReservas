@@ -150,16 +150,6 @@ export default function Gerenciar() {
                                         }
                                     </Table.Cell>
                                     <Table.Cell>
-                                        <Button
-                                            size="sm"
-                                            onClick={() => handleEdit(item.id)}
-                                            className="mr-2"
-                                            padding={"8px"}
-                                            bgColor={"#3c89f5"}
-                                        >
-                                            <BsPencilSquare color="white" fontSize={"20px"} />
-                                        </Button>
-
                                         <DialogRoot placement={"center"} role="alertdialog">
                                             <DialogTrigger asChild>
                                                 <Button

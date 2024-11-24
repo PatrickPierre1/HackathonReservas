@@ -39,11 +39,15 @@ export default function Login() {
             const token = resposta.data.token;
             const nome = resposta.data.nome;
             const permissoes = resposta.data.permissoes;
-            const usuario_id = resposta.data.id
+            const permissoesCookie = JSON.stringify(resposta.data.permissoes);
+            const usuario_id = resposta.data.usuario_id;
+
+            const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString(); // Expira em 7 dias
+            document.cookie = `unialfa.permissoes=${permissoesCookie}; expires=${expires}; path=/;`;
             localStorage.setItem('unialfa.token', token);
             localStorage.setItem('unialfa.nome', nome);
             localStorage.setItem('unialfa.permissoes', permissoes);
-            localStorage.setItem('unialfa.usuario_id', "2");
+            localStorage.setItem('unialfa.usuario_id', usuario_id);
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             router.push('/');
           })
@@ -77,8 +81,8 @@ export default function Login() {
         <div className="border-2 border-gray-300 p-6 w-full max-w-md rounded-lg shadow-md bg-white">
           <div className="flex flex-col items-center">
             <div className="flex items-center justify-between h-16 m-4">
-                                    <Image src={logo} alt="" width={250} />
-                                </div>
+              <Image src={logo} alt="" width={250} />
+            </div>
             <p className="text-gray-500 text-lg">Preencha os campos para logar</p>
           </div>
           <hr className="my-4" />
