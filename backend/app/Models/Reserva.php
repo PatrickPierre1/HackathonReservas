@@ -33,4 +33,9 @@ class Reserva extends Model
     {
         return $this->belongsTo(Ambiente::class);
     }
+
+    public function historico(): HasOne
+    {
+        return $this->hasOne(HistoricoReserva::class);
+    }
 }
