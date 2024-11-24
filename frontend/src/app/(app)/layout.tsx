@@ -22,7 +22,7 @@ const LinkItems = [
     requiresPermission: "Admin", // Permissão necessária
   },
   { name: "Reservas", icon: RiCalendarTodoFill, href: "/reservas" },
-  { name: "Históricos", icon: PiScrollFill, href: "/historicos" },
+  { name: "Históricos", icon: PiScrollFill, href: "/historicos", requiresPermission: "Admin" },
   {
     name: "Configurações",
     icon: FiSettings,

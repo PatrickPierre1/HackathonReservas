@@ -1,12 +1,8 @@
 "use client";
 
 import { Box, Button, HStack, Stack, Table } from "@chakra-ui/react";
-import {
-    PaginationItems,
-    PaginationNextTrigger,
-    PaginationPrevTrigger,
-    PaginationRoot,
-} from "@/components/ui/pagination";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { BsPencilSquare } from "react-icons/bs";
 import { MdDelete } from "react-icons/md";
 import { FiPlus } from 'react-icons/fi';
@@ -14,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
     DialogActionTrigger,
-    DialogBody, 
+    DialogBody,
     DialogCloseTrigger,
     DialogContent,
     DialogFooter,
@@ -48,8 +44,30 @@ export default function Configuracoes() {
         router.push(`/configuracoes/editar/${id}`);
     };
 
-    const handleDelete = (id: number) => {
-        console.log(`Excluir Usuario com ID: ${id}`);
+    const handleDelete = async (id: number) => {
+        try {
+            const token = localStorage.getItem('unialfa.token');
+            if (!token) {
+                console.error("Token não encontrado");
+                return;
+            }
+
+            const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/usuarios/${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.status === 200) {
+                setUsuarios((prevUsuarios) => prevUsuarios.filter((item) => item.id !== id));
+                toast.success("Usuário deletado com sucesso!");
+            } else {
+                throw new Error('Erro ao excluir usuario');
+            }
+        } catch (error) {
+            console.error("Erro ao excluir o usuario:", error);
+            toast.error("Erro ao deletar usuário. Tente novamente mais tarde.");
+        }
     };
 
     const [usuarios, setUsuarios] = useState<Usuario[]>([]);  // Renomeado para setUsuarios
@@ -146,18 +164,8 @@ export default function Configuracoes() {
                         ))}
                     </Table.Body>
                 </Table.Root>
-
-
-                <div className="flex justify-end">
-                    <PaginationRoot count={usuarios.length * 5} pageSize={5} page={1}>
-                        <HStack wrap="wrap">
-                            <PaginationPrevTrigger />
-                            <PaginationItems />
-                            <PaginationNextTrigger />
-                        </HStack>
-                    </PaginationRoot>
-                </div>
             </Stack>
+            <ToastContainer />
         </>
     );
 }

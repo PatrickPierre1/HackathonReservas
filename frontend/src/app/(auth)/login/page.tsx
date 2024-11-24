@@ -7,6 +7,8 @@ import axios from 'axios';
 import logo from "../../../../public/images/login.png"
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Login() {
   const router = useRouter();
@@ -53,7 +55,7 @@ export default function Login() {
           })
           .catch((erro) => {
             console.error('Erro ao fazer login:', erro);
-            alert('Erro ao fazer login. Verifique suas credenciais.');
+            toast.error("Erro ao fazer login. Verifique suas credenciais.");
             setIsLoading(false);
             setIsToast(true);
           });
@@ -135,6 +137,7 @@ export default function Login() {
           </form>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 }

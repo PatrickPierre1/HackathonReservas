@@ -17,21 +17,19 @@ interface Notification {
 export default function Notifications() {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
-    const [token, setToken] = useState<string | null>(null);  // Armazena o token (você pode definir de onde ele vem)
+    const [token, setToken] = useState<string | null>(null);
     const [userId, setUserId] = useState<number | null>(null);
 
-    // Obtendo o token e o ID do usuário do localStorage
     useEffect(() => {
         const storedToken = localStorage.getItem('unialfa.token');
         const storedUserId = localStorage.getItem('unialfa.usuario_id');
 
         if (storedToken) setToken(storedToken);
-        if (storedUserId) setUserId(Number(storedUserId)); // Converte o ID para número
+        if (storedUserId) setUserId(Number(storedUserId));
     }, []);
 
-    // Fetch notifications from API
     useEffect(() => {
-        if (!token || userId === null) return; // Se o token ou o ID do usuário não estiver disponível, não faz a requisição
+        if (!token || userId === null) return;
 
         const fetchNotifications = async () => {
             try {
@@ -43,7 +41,6 @@ export default function Notifications() {
 
                 const data = response.data;
 
-                // Filtra as notificações para exibir apenas as do usuário logado
                 if (Array.isArray(data)) {
                     const userNotifications = data.filter((notification: Notification) => notification.usuario_id === userId);
                     setNotifications(userNotifications);
@@ -56,30 +53,47 @@ export default function Notifications() {
         };
 
         fetchNotifications();
-    }, [token, userId]); // Recarrega as notificações sempre que o token ou userId mudar
+    }, [token, userId]);
 
-    // Function to handle appointment cancellation
     const cancelAppointment = async () => {
         if (!selectedNotification || !token) return;
 
         try {
-            const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/notificacoes/${selectedNotification.id}`, {
+            // Cancelar a notificação
+            const notificationResponse = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/notificacoes/${selectedNotification.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
 
-            if (response.status === 200) {
+            if (notificationResponse.status === 200) {
+
+                const reservaId = selectedNotification.tipo === "reserva" ? selectedNotification.id : null;
+
+                if (reservaId) {
+                    const reservaResponse = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/reservas/${reservaId}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+
+                    if (reservaResponse.status !== 200) {
+                        throw new Error('Erro ao cancelar a reserva');
+                    }
+                }
+
+                // Remover notificação da lista
                 setNotifications((prevNotifications) =>
                     prevNotifications.filter((notification) => notification.id !== selectedNotification.id)
                 );
-                toast.success("Reserva cancelada com sucesso!")
+
+                toast.success("Notificação e reserva canceladas com sucesso!");
             } else {
-                throw new Error('Erro ao cancelar o agendamento');
+                throw new Error('Erro ao cancelar a notificação');
             }
         } catch (error) {
-            toast.error("Erro ao cancelar a reserva.")
-            console.error("Erro ao cancelar a reserva:", error);
+            toast.error("Erro ao cancelar a notificação ou reserva.");
+            console.error("Erro ao cancelar a notificação ou reserva:", error);
         }
     };
 
