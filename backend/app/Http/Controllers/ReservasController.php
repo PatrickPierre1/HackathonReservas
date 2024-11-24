@@ -5,13 +5,22 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ReservasRequest;
 use App\Http\Resources\ReservasResource;
 use App\Models\Ambiente;
+use App\Models\HistoricoReserva;
 use App\Models\Reserva;
+use Illuminate\Http\Request;
 
 class ReservasController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return ReservasResource::collection(Reserva::all());
+
+        $reservas = Reserva::with('usuario')->with('ambiente');
+
+        if ($request->usuario_id) {
+            return ReservasResource::collection($reservas->where('usuario_id', $request->usuario_id)->get());
+        }
+
+        return ReservasResource::collection($reservas->get());
     }
 
     public function store(ReservasRequest $request)
@@ -24,6 +33,11 @@ class ReservasController extends Controller
 
         $reserva = Reserva::create($request->validated());
 
+        HistoricoReserva::create([
+            'reserva_id' => $reserva->id,
+            'alteracoes' => "Reserva adicionada " . now()
+        ]);
+
         return new ReservasResource($reserva);
     }
 
@@ -34,7 +48,7 @@ class ReservasController extends Controller
 
     public function update(ReservasRequest $request, Reserva $reserva)
     {
-        $mensagemConflito = $this->validaConflito($request);
+        $mensagemConflito = $this->validaConflito($request, $reserva->id);
 
         if ($mensagemConflito) {
             return response()->json(['mensagem' => $mensagemConflito], 422);
@@ -42,17 +56,29 @@ class ReservasController extends Controller
 
         $reserva->update($request->validated());
 
+        $historicoReserva = HistoricoReserva::where('reserva_id', $reserva->id);
+
+        if ($historicoReserva) {
+            $historicoReserva->update([
+                'alteracoes' => "Reserva alterada " . now()
+            ]);
+        }
+
         return new ReservasResource($reserva);
     }
 
     public function destroy(Reserva $reserva)
     {
+        if ($reserva->historico) {
+            $reserva->historico->delete();
+        }
+
         $reserva->delete();
 
         return response()->json(['message' => 'Reserva deletada com sucesso']); 
     }
 
-    private function validaConflito(ReservasRequest $request)
+    private function validaConflito(ReservasRequest $request, $reserva_id = null)
     {
         $ambiente = Ambiente::find($request->ambiente_id);
 
@@ -64,6 +90,7 @@ class ReservasController extends Controller
 
         $conflito = Reserva::where('ambiente_id', $request->ambiente_id)
         ->where('status', 1)
+        ->where('id', '!=', $reserva_id)
         ->where(function ($query) use ($request) {
             $query->where(function ($query) use ($request) {
                 $query->where('data_hora_inicio', '<', $request->data_hora_inicio)

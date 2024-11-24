@@ -21,6 +21,8 @@ class ReservasResource extends JsonResource
             'data_hora_inicio' => $this->data_hora_inicio,
             'data_hora_fim' => $this->data_hora_fim,
             'status' => $this->status,
+            'usuario' => $this->usuario,
+            'ambiente' => $this->ambiente,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];
