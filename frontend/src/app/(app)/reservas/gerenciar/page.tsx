@@ -43,10 +43,6 @@ export default function Gerenciar() {
         }
     }, [router]);
 
-    const handleEdit = (id: number) => {
-        router.push(`/ambientes/gerenciar/editar/${id}`);
-    };
-
     const handleDelete = async (id: number) => {
         try {
             const token = localStorage.getItem('unialfa.token');

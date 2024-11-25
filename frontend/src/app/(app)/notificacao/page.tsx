@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { Button, Box, Text } from '@chakra-ui/react';
-import { FaCalendarXmark } from "react-icons/fa6";
+import { MdCancel } from "react-icons/md";
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -123,15 +123,16 @@ export default function Notifications() {
                         </Text>
                         <Button
                             bgColor={"red.500"}
-                            padding={"7px"}
+                            padding={"4px"}
                             color={"white"}
-                            size="sm"
+                            size="md"
+                            rounded={"full"}
                             onClick={() => {
                                 setSelectedNotification(notification);
                                 cancelAppointment();
                             }}
                         >
-                            <FaCalendarXmark color="white" /> Cancelar Reserva
+                            <MdCancel color="white" />
                         </Button>
                     </Box>
                 ))

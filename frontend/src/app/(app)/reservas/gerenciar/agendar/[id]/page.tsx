@@ -73,7 +73,7 @@ export default function Agendar({ params }: { params: { id: string } }) {
                 ambiente_id: ambienteId,
                 data_hora_inicio: formData.data_hora_inicio,
                 data_hora_fim: formData.data_hora_fim,
-                status: "2",
+                status: "1",
             };
 
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/reservas`, requestData, {

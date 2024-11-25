@@ -1,12 +1,8 @@
 "use client";
 
 import { Box, Button, HStack, Stack, Table } from "@chakra-ui/react"
-import {
-    PaginationItems,
-    PaginationNextTrigger,
-    PaginationPrevTrigger,
-    PaginationRoot,
-} from "@/components/ui/pagination"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { BsPencilSquare } from "react-icons/bs";
 import { MdDelete } from "react-icons/md";
 import { FiPlus } from 'react-icons/fi';
@@ -54,8 +50,30 @@ export default function Gerenciar() {
         router.push(`/ambientes/gerenciar/editar/${id}`);
     };
 
-    const handleDelete = (id: number) => {
-        console.log(`Excluir ambiente com ID: ${id}`);
+    const handleDelete = async (id: number) => {
+        try {
+            const token = localStorage.getItem('unialfa.token');
+            if (!token) {
+                console.error("Token não encontrado");
+                return;
+            }
+
+            const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/ambientes/${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.status === 200) {
+                setAmbientes((prevAmbientes) => prevAmbientes.filter((item) => item.id !== id));
+                toast.success("Ambiente deletado com sucesso!");
+            } else {
+                throw new Error('Erro ao excluir ambiente');
+            }
+        } catch (error) {
+            console.error("Erro ao excluir o ambiente:", error);
+            toast.error("Erro ao deletar ambiente. Tente novamente mais tarde.");
+        }
     };
 
     const [ambientes, setAmbientes] = useState<Ambiente[]>([]);
@@ -166,6 +184,7 @@ export default function Gerenciar() {
                 </Table.ScrollArea>
 
             </Stack>
+            <ToastContainer />
         </>
     )
 }
