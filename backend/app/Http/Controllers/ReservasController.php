@@ -8,6 +8,7 @@ use App\Models\Ambiente;
 use App\Models\HistoricoReserva;
 use App\Models\Reserva;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class ReservasController extends Controller
 {
@@ -17,6 +18,14 @@ class ReservasController extends Controller
         $reservas = Reserva::with('usuario')->with('ambiente');
 
         if ($request->usuario_id) {
+
+            if ($request->proximos7Dias) {
+                $dataInicial = Carbon::now();
+                $dataFinal = Carbon::now()->addDays(7);
+
+                return $reservas->where('usuario_id', $request->usuario_id)->whereBetween('data_hora_inicio', [$dataInicial, $dataFinal])->count();
+            }
+
             return ReservasResource::collection($reservas->where('usuario_id', $request->usuario_id)->get());
         }
 
