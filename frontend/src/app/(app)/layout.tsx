@@ -12,7 +12,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { cookies } from "next/headers"; // Para acessar cookies no lado do servidor
-import ToastProvider from "@/components/ui/ToastProvider";
 
 const LinkItems = [
   { name: "Home", icon: FiHome, href: "/" },
@@ -65,8 +64,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={poppins.className}>
       <body suppressHydrationWarning={false}>
-        <Provider>
-          <ToastProvider>
+        <>
+          <Provider>
             <div className="min-h-screen flex flex-col bg-gray-100">
               <div
                 className={`${styles.sidebar} fixed inset-y-0 left-0 z-30 w-64 shadow-md transform lg:translate-x-0`}
@@ -83,6 +82,7 @@ export default function RootLayout({
                 </div>
                 <nav className="mt-4">
                   {LinkItems.map((link) => {
+                    // Verificar se o link requer permissões específicas
                     if (
                       link.requiresPermission &&
                       !permissions.includes(link.requiresPermission)
@@ -106,8 +106,8 @@ export default function RootLayout({
               <Header />
               <main className="flex-1 p-4 lg:ml-64">{children}</main>
             </div>
-          </ToastProvider>
-        </Provider>
+          </Provider>
+        </>
       </body>
     </html>
   );
