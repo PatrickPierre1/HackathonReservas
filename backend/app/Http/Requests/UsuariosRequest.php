@@ -24,14 +24,14 @@ class UsuariosRequest extends FormRequest
         $rules = [
             'nome' => 'required|string|min:3|max:255',
             'email' => 'required|email|unique:users,email',
-            'senha' => 'required|string|min:4',
+            'senha' => 'required|string|min:8',
         ];
 
         if ($this->method() === 'PATCH' || $this->method() === 'PUT') {
             $rules = [
                 'nome' => 'nullable|string|min:3|max:255',
                 'email' => 'nullable|email|unique:users,email,' . $this->usuario->id,
-                'senha' => 'nullable|string|min:4',
+                'senha' => 'nullable|string|min:8',
             ];
         }
 
