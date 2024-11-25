@@ -1,11 +1,22 @@
 "use client";
-import { Box, Text, Grid, Badge, Button, Spinner, Flex, Stack, Table, DialogRoot, DialogCloseTrigger, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogActionTrigger } from "@chakra-ui/react";
+import { Box, Text, Grid, Badge, Button, Stack, Table, Flex } from "@chakra-ui/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { MdDelete, MdPeopleAlt } from "react-icons/md";
+import { MdPeopleAlt } from "react-icons/md";
 import { TbClockHour3Filled } from "react-icons/tb";
 import { FaCalendarXmark, FaComputer } from "react-icons/fa6";
+import {
+    DialogActionTrigger,
+    DialogBody,
+    DialogCloseTrigger,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogRoot,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 
 interface Ambiente {
     id: number;
@@ -51,9 +62,19 @@ export default function Reservas() {
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const router = useRouter();
-    const nome = localStorage.getItem('unialfa.nome');
-    const permissoes = localStorage.getItem('unialfa.permissoes');
-    const isAdmin = localStorage.getItem('unialfa.permissoes') === "Admin";
+    const [nome, setNome] = useState<string | null>(null);
+    const [permissoes, setPermissoes] = useState<string | null>(null);
+    const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+
+    useEffect(() => {
+        const nome = localStorage.getItem('unialfa.nome');
+        const permissoes = localStorage.getItem('unialfa.permissoes');
+        const admin = permissoes === "Admin";
+
+        setNome(nome);
+        setPermissoes(permissoes);
+        setIsAdmin(admin);
+    }, []);
 
     useEffect(() => {
         const token = localStorage.getItem('unialfa.token');
@@ -236,7 +257,7 @@ export default function Reservas() {
             <Text fontSize="3xl" fontWeight="bold" textAlign="center" mb={6}>
                 Suas Reservas
             </Text>
-            <Stack width="full" gap="5">
+            <Stack width="full" gap="5" paddingBottom={"30vh"}>
                 <Table.ScrollArea borderWidth="1px" maxW="screen">
                     <Table.Root size="md" variant="line" striped interactive>
                         <Table.Header>
@@ -263,10 +284,9 @@ export default function Reservas() {
                                                     padding={"8px"}
                                                     bgColor={"red.500"}
                                                 >
-                                                    <Flex color={"white"} gap={3}>
-                                                        <FaCalendarXmark color="white" />
-                                                        <Text>Cancelar reserva</Text>
-                                                    </Flex>
+                                                    <FaCalendarXmark color="white" />
+                                                    <Text color={"white"}>Cancelar reserva</Text>
+
                                                 </Button>
                                             </DialogTrigger>
                                             <DialogContent>
@@ -275,19 +295,18 @@ export default function Reservas() {
                                                 </DialogHeader>
                                                 <DialogBody>
                                                     <p>
-                                                        Essa ação não pode ser desfeita. Isso excluirá permanentemente e os dados de nossos sistemas.
+                                                        Essa ação não pode ser desfeita. Isso excluirá permanentemente os dados de nossos sistemas.
                                                     </p>
                                                 </DialogBody>
                                                 <DialogFooter>
                                                     <DialogActionTrigger asChild>
                                                         <Button variant="outline">Cancelar</Button>
                                                     </DialogActionTrigger>
-                                                    <Button onClick={() => handleDelete(item.id)} bgColor="red.500" color={"white"} paddingX={"10px"}>Deletar</Button>
+                                                    <Button onClick={() => handleDelete(item.id)} bgColor="red.500" color={"white"} paddingX={"10px"}>Deletar reserva</Button>
                                                 </DialogFooter>
                                                 <DialogCloseTrigger />
                                             </DialogContent>
                                         </DialogRoot>
-
                                     </Table.Cell>
                                 </Table.Row>
                             ))}

@@ -28,19 +28,25 @@ export default function Home() {
   const [reservasCount, setReservasCount] = useState<number>(0);
   const [nome, setNome] = useState<string | null>(null);
   const [permissoes, setPermissoes] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [selectedAmbiente, setSelectedAmbiente] = useState<string>("");
   const [currentIndex, setCurrentIndex] = useState(0);
-  const isAdmin = localStorage.getItem('unialfa.permissoes') === "Admin";
+
 
   // Validando Token 
   useEffect(() => {
     setIsClient(true);
     const token = localStorage.getItem("unialfa.token");
+    const permissoes = localStorage.getItem('unialfa.permissoes');
+    const admin = permissoes === "Admin";
+
     if (!token) {
       router.replace("/login");
     } else {
       setNome(localStorage.getItem("unialfa.nome"));
       setPermissoes(localStorage.getItem("unialfa.permissoes"));
+
+      setIsAdmin(admin);
     }
   }, [router]);
 
